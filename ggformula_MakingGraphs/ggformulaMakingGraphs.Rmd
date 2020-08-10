@@ -1,0 +1,294 @@
+---
+title: "Creating Graphs with ggformula"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+
+# This tutorial will use the following packages
+library(ggplot2)
+library(ggformula)
+library(mosaic)
+
+# The csv file should be imported into RStudio:
+AmesHousingFull <- read.csv("data/AmesHousing.csv")
+AmesHousingFull$KitchenQuality <- 
+      ifelse(AmesHousingFull$KitchenQual == "Ex","Excellent", 
+      ifelse(AmesHousingFull$KitchenQual == "Gd", "Good",
+      ifelse(AmesHousingFull$KitchenQual == "TA","Average",
+      ifelse(AmesHousingFull$KitchenQual == "Fa", "Fair", "Poor")))) 
+
+# AmesHousingFull$Fireplaces <- as.factor(AmesHousingFull$Fireplaces)
+AmesHousing <- select(AmesHousingFull, SalePrice, GrLivArea, Fireplaces, KitchenQuality)
+
+# Needed Cleaning 
+AmesHousing2 <- AmesHousing %>%
+  filter(Fireplaces < 3) %>%
+  filter(KitchenQuality != "Poor")
+```
+
+## 1. Introduction
+It is often necessary to create graphs to effectively communicate key patterns within a dataset. Many software packages allow the user to make basic plots, but it can be challenging to create plots that are customized to address a specific idea. While there are numerous ways to create graphs, this tutorial will focus on the R package **ggformula**, created by Danny Kaplan and Randy Pruim.
+
+**Data**: In this tutorial, we will use the  [AmesHousing](http://www.amstat.org/publications/jse/v19n3/decock.pdf) data, which provides information on the sales of individual residential properties in Ames, Iowa from 2006 to 2010. The data set contains 2930 observations, and a large number of explanatory variables involved in assessing home values. A full description of this dataset can be found [here](http://jse.amstat.org/v19n3/decock/DataDocumentation.txt).
+
+To start, we will focus on just a few variables:
+
+* `SalePrice`: The sale price of the home 
+* `GrLivArea`: The above ground living area in the home (in square feet)
+* `Fireplaces`: The number of fireplaces in the home
+* `KitchenQualily`: The quality rating of the kitchen (Excellent, Good, Average, Fair, or Poor)
+
+Select the **Run Code** button on the right to run the code in the section below. 
+
+```{r task1, exercise=TRUE}
+# The code below uses the head() function to view the first four lines of the AmesHousing data.
+head(AmesHousing, 4)
+```
+
+**On Your Own**
+
+* Modify the code above to use the 'tail()' function to view the last 10 rows of the AmesHousing data.
+* View the last ten rows and verify that the sales price of the house in row 2925 is 131000.
+
+### The structure of functions in the ggformula package
+
+The **ggformula** package is based on another graphics package called **ggplot2**. It provides an interface that makes coding easier for people new to coding in R. One primary benefit is that it follows the same intuitive structure provided by the creators of the [mosaic package](https://cran.r-project.org/web/packages/mosaic/mosaic.pdf).
+
+<h3 style="text-align: center;" markdown="1"> goal ( y ~ x , data = mydata, ... ) </h3>
+
+For example, if our goal is to create a scatterplot in **ggformula**, we use the function called `gf_point()`, to create a graph with points. We then use `SalePrice` as our y variable and `GrLivArea` as our x variable. The `...` indicates that we have an option to add additional code, but it is not required.
+
+```{r task2, exercise=TRUE}
+# Create a scatterplot of above ground living area by sales price
+gf_point(SalePrice ~ GrLivArea, data = AmesHousing)
+```
+
+## 2. Making Modifications to Scatterplots with ggformula
+
+It is easy to make modifications to the color, shape and transparency of the points in a scatterplot. 
+
+```{r task3, exercise = TRUE}
+# Create a scatterplot with log transformed variables, coloring by a third variable
+gf_point(log(SalePrice) ~ log(GrLivArea), data = AmesHousing, color = "navy", shape = 15, alpha = .2)
+```
+
+
+**On Your Own**
+
+* In the code above, adjust `alpha` to any values between 0 and 1. How does changing `alpha` modify the points on a graph?
+* Adjust the shape values. For example, what symbol is used when `shape = 1`?
+* Run the above code using `color = ~ KitchenQuality`. What color corresponds to Kitchen Quality = Good?
+
+Notice that fixed color names are given in quotes, `color = "navy"`. However, if we select colors based upon a variable from our data frame, we treat it as an explanatory variable, `~ x`, in our model.
+
+The scatterplots above suffer from overplotting, that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In **ggformula**, this is easily done using the gf_facet_grid() layer.
+
+We can use the pipe operator `%>%` to add a new layer into a graph. This pipe operator is an easy way to create a chain of processing actions by allowing an intermediate result (left of the %>%) to become the first argument of the next function (right of the %>%). Below we start with a scatterplot and then assign that scatterplot to the `gf_facet_grid()` function to create distinct panels for each type of kitchen quality. Then the result is again passed to the `gf_labs()` function, which adds titles and labels to the graph. 
+
+```{r task4, exercise = TRUE}
+# Create distinct scatterplots for each type of kitchen quality
+gf_point(SalePrice/100000 ~ GrLivArea, data = AmesHousing) %>%
+  gf_facet_grid(KitchenQuality ~ . ) %>%
+  gf_labs(title = "Figure 3: Housing Prices in Ames, Iowa",
+          y = "Sale Price (in $100,000)",
+          x = "Above Ground Living Area")
+```
+
+Figure 3 facets the scatterplot by Kitchen Quality. In Figure 4, we overplot these graphs, and use color and shape to identify the Kitchen Quality. Both graphs allow us to look at Sale Price by Above Ground Living Area and Kitchen Quality at the same time. Often, researchers create multiple graphs to determine which best shows patterns within the data. Figure 4 allows us to more clearly see the effect of Kitchen Quality on the Sale Price, however, it is still difficult to see many of the points.
+
+
+```{r task5, exercise = TRUE}
+gf_point(SalePrice/100000 ~ GrLivArea, data = AmesHousing, shape = ~ KitchenQuality, color = ~ KitchenQuality) %>% 
+  gf_lm() %>% 
+  gf_labs(title = "Figure 4: Housing Prices in Ames, Iowa",
+          y = "Sale Price (in $100,000)", 
+          x = "Above Ground Living Area")
+```
+
+
+**Remarks:**
+
+* The code `gf_lm()` adds a linear model to the graph in Figure 4. If you use `gf_smooth()`, A smooth curve will be fit to the data.
+* Both `gf_facet_grid` and `gf_facet_wrap` commands are used to create multiple plots. Try incorporating `gf_facet_wrap( ~ KitchenQuality)` or `gf_facet_grid(Fireplaces ~ KitchenQuality)` into a scatterplot to see how it separates each graph by a categorical variable. Note that  `gf_facet_grid(KitchenQuality ~ . )` indicates that we should facet by the y axis and not by the x axis.
+* When assigning fixed characteristics (such as `color`, `shape` or `size`), the commands include quotes, such as `color = "green"`. When characteristics are dependent on the data, the command should occur without quotes, such as `color = ~ KitchenQuality`.
+
+
+## 3. Creating More Graphs with ggformula
+
+The previous examples focused on scatterplots. The [ggformula description](https://cran.r-project.org/web/packages/ggformula/ggformula.pdf) lists multiple graphs and gives detailed examples of how they are used. You can also use the tab completion feature in RStudio (type `gf_` and hit the `Tab` key on your console) to see options for most graphs.
+
+In this section we will build upon the same `y ~ x` format for every **ggformula** plot and demonstrate several additional types of graphs that can be made.
+
+<h3 style="text-align: center;" markdown="1"> goal ( y ~ x | z, data = ...) </h3>
+
+where
+
+* y: is y-axis variable
+* x: is x-axis variable
+* z: conditioning variable (separate panels)
+
+In general `y ~ x | z` can be read `y is modeled by (or depends on) x differently for each z`. This is just like using the facet commands. For example, the following code creates a jitter plot that incorporates two explanatory variables, `KitchenQualily` and `Fireplaces`. We then use the pipe operator to add boxplots and labels. 
+
+```{r task6, exercise = TRUE}
+gf_jitter(log(SalePrice) ~ KitchenQuality | Fireplaces , data = AmesHousing, color = "lightblue") %>%
+gf_boxplot(alpha = .05) %>%
+  gf_labs(title = "Figure 5: Housing Prices in Ames, Iowa",
+          subtitle = "Faceted by Number of Fireplaces",
+          y = "Log(Sale Price)")
+```
+
+
+When we are working with univariate graphs, we still keep our structure of `y ~ x | z`. For example if we want a histogram of SalePrice, we only have one `x` variable, so it is coded `gf_histogram(~ SalePrice, data = AmesHousing)` to indicate that there is no y variable in our graph. In the code below we create a histogram for SalePrice, colored for each level of KithchenQuality. 
+
+```{r task7, exercise = TRUE}
+gf_histogram(~ SalePrice, data = AmesHousing, color = ~ KitchenQuality, fill = ~ KitchenQuality) 
+
+```
+
+**On Your Own**
+
+* What is the difference between `gf_jitter` and `gf_point`?
+* Which of the following will create distinct histograms of the sale price for each level of kitchen quality?
+
+    + gf_histogram(~ SalePrice | KitchenQuality, data = AmesHousing)
+    + gf_histogram(~ SalePrice, data = AmesHousing) %>% 
+      gf_facet_grid(KitchenQuality ~ . )
+    + gf_histogram(~ SalePrice, data = AmesHousing) %>% 
+      gf_facet_grid(. ~ KitchenQuality)
+
+
+## 4. Modifying Data for Better Graphics
+
+You may notice in the earlier graphs that there are very few houses with more than two fireplaces and only one house that was categorized as having poor kitchen quality. Before going further we will remove these rare points using the **dplyr** package. These functions are described in a separate tutorial (see examples in the [Stat2Labs](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html) Website).
+
+
+```{r task8, exercise = TRUE}
+AmesHousing2 <- AmesHousing %>%
+  filter(Fireplaces < 3) %>%
+  filter(KitchenQuality != "Poor")
+
+tally(Fireplaces~KitchenQuality, data = AmesHousing2)
+```
+
+By removing rare points Figure 5 is now easier to read. We no longer have an entire panel representing just one data point. Modify the code below to have Fireplaces on the x-axis and facet by kitchen Quality.
+
+```{r task9, exercise = TRUE, exercise.eval=TRUE}
+gf_jitter(log(SalePrice) ~ KitchenQuality |Fireplaces , data = AmesHousing2, color = "lightblue") %>%
+gf_boxplot(alpha = .05) %>%
+  gf_labs(title = "Figure 5B: Housing Prices in Ames, Iowa",
+          subtitle = "Faceted by Number of Fireplaces",
+          y = "Log(Sale Price)")
+```
+
+
+```{r task9-hint}
+gf_jitter(log(SalePrice) ~ Fireplaces | KitchenQuality , data = AmesHousing2, color = "lightblue") %>%
+gf_boxplot(alpha = .05) %>%
+  gf_labs(title = "Figure 5B: Housing Prices in Ames, Iowa",
+          subtitle = "Faceted by KitchenQuality",
+          y = "Log(Sale Price)")
+```
+
+A graph using `Fireplaces` as our x-variable no longer creates separate boxplots for each level of the `Fireplaces` variable. The reason for this is that in this data frame, each element of the `Fireplaces` column is considered an integer value. When variables are quantitative, some graphs cannot identify specific levels of fireplaces. Before we can create a distinct boxplots based upon the number of fireplaces, we need to treat `Fireplaces` as a **factor** (a qualitative variable). 
+
+### Influence of data types on graphics: 
+
+If you use the `str` command, you will notice that each variable is assigned one of the following `types` of data: 
+
+
+* `int` integer values
+* `dbl` doubles or real numbers
+* `chr` character values (strings of letters or symbols)
+* `lgl` logical values that contain only TRUE or FALSE.
+* `fctr` factors (categorical variables with fixed values)
+* `date` dates
+
+
+```{r task10, exercise = TRUE}
+str(AmesHousing2)
+```
+
+In the following code, we use the `dplyr` package to create a new variable, called **Fireplace2**. The `as.factor` command creates a **factor**, which is a variable that contains a set of numeric codes with character-valued levels. Try recreating Figure 5 below, using `Fireplace2` on the x-axis and facet by `KitchenQuality`.
+
+```{r task11, exercise = TRUE}
+AmesHousing2 <- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+str(AmesHousing2)
+```
+
+
+```{r task11-hint}
+AmesHousing2 <- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+gf_jitter(log(SalePrice) ~ Fireplace2 | KitchenQuality , data = AmesHousing2, color = "lightblue") %>%
+gf_boxplot(alpha = .05) %>%
+  gf_labs(title = "Figure 5B: Housing Prices in Ames, Iowa",
+          subtitle = "Faceted by KitchenQuality",
+          y = "Log(Sale Price)")
+```
+
+Modify the code below to create density plot using the new categorical variable `Fireplace2` instead of the integer valued term, `Fireplaces`. Notice that the `color` and `fill` command now work properly for `Fireplace2`, but not for `Fireplaces`.
+
+```{r task12, exercise = TRUE}
+AmesHousing2 <- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+gf_density(~ SalePrice, data = AmesHousing2, color = ~ Fireplaces, fill = ~ Fireplaces)
+```
+
+
+
+**Remarks
+
+* Typing in a function will show you what attributes can be used. For example if you type `gf_histogram()` in one of the code chunks above a summarized output will be displayed showing that in addition to `alpha`, `color`, and `fill`, additional attributes such as `binwidth`, `linetype`, and `size` can be used.
+
+* Specific details can be found for any funciton in `ggformula`. For example, typing `?gf_histogram()` in one of the code chunks will bring you to a new website with examples and more details about this funciton.
+
+* In the above examples, only a few functions are listed. The [ggformula description](https://cran.r-project.org/web/packages/ggformula/ggformula.pdf) lists each function and gives detailed examples of how they are used. You can also use the tab completion feature in RStudio (type `gf_` and hit the Tab key on your console) to see options for most graphs.
+
+
+## 5. On Your Own
+
+In order to complete this activity, you will need to use the `dplyr` package to manipulate the dataset before making any graphics. If you have not yet worked with the `dplyr` package, hints are provided to help with the first several items listed below.
+
+* Restrict the `AmesHousingFull` data to only sales under normal conditions. In other words, `Condition1 == Norm`. How many homes were sold under normal conditions?
+* Create a new variable called `TotalSqFt = GrLivArea  +  TotalBsmtSF` and remove any homes with more than 5000 total square feet. How many homes sold under normal conditions were greater than 5000 total square feet?
+* Create a new variable, where `No` indicates no fireplaces in the home and `Yes` indicates at least one fireplace in the home. How many of the remaining houses have at least one fireplace?
+* With this modified data file, create a graphic involving no more than three explanatory variables that portrays how to estimate sales price. For example, in previous graphics we used kitchen quality, above ground square footage, and number of fireplaces to estimate sale price.
+
+```{r task13, exercise = TRUE}
+str(AmesHousingFull)
+```
+
+```{r task13-hint-1}
+tally(~ Condition1, data = AmesHousingFull)
+AmesHousingFull <- filter(AmesHousingFull, Condition1 == "Norm")
+dim(AmesHousingFull)
+```
+
+
+```{r task13-hint-2}
+AmesHousingFull <- mutate(AmesHousingFull, TotalSqFt = GrLivArea + TotalBsmtSF)
+AmesHousingFull <- filter(AmesHousingFull, TotalSqFt <= 5000)
+dim(AmesHousingFull)
+```
+
+
+```{r task13-hint-3}
+AmesHousingFull <- mutate(AmesHousingFull, Fireplace = ifelse(Fireplaces == 0, "No", "Yes"))
+tally(~ Fireplace, data = AmesHousingFull)
+```
+
+
+## 6. References and Resources
+
+- The [Stat2Labs](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html) Website includes several additional tutorials and datasets. The is also available on our [GitHub Site](https://github.com/ds4stats).
+
+- https://www.rdocumentation.org/packages/ggformula/versions/0.7.0: A full description of the ggformula package.
+
+- https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf: Data Visualization with ggplot2 Cheat Sheet. Note that this sheet lists several shape scales and color scales that can be used within **ggformula**. 
+
+- The default color schemes are often not ideal. In some cases, it can be difficult to perceive differences between categories.  To learn more about color schemes, see Roger Peng's discussion of plotting and colors in R,  https://www.youtube.com/watch?v=HPSrjKt-e8c, or the R Graph Gallery, https://www.r-graph-gallery.com/. 

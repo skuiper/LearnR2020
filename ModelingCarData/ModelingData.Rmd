@@ -1,0 +1,295 @@
+---
+title: "Modeling Data"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(ggformula)
+library(mosaic)
+library(readr)      
+knitr::opts_chunk$set(echo = FALSE)
+options(scipen = 10)
+#options(digits=2)
+theme_set(theme_bw())
+
+GMCars1 <- read_csv("data/GMCars1.csv")
+Cars.lm = lm(Price ~ Mileage, data = GMCars1)
+Cars.lm2 = lm(Price ~ Mileage + Make, data = GMCars1) 
+Cars.lm3 = lm(Price ~ Mileage*Make, data = GMCars1) 
+
+GMCars1 = mutate(GMCars1, res1 = resid(Cars.lm), fits1 = fitted(Cars.lm), res2 = resid(Cars.lm2), fits2 = fitted(Cars.lm2), res3 = resid(Cars.lm3), fits3 = fitted(Cars.lm3))
+
+GMCars2 <- read_csv("data/GMCars2.csv")
+```
+
+
+## Introduction
+
+In this tutorial you will build a multivariate regression model to describe the relationship between the retail price of used GM cars. We include several variables in this dataset that might influence the `Price` of a car:
+
+* Mileage (number of miles the car has been driven)
+* Make (Buick, Cadillac, Chevrolet, Pontiac, SAAB, Saturn)
+* Type (Sedan, Coupe, Hatchback, Convertible, or Wagon)
+* Cyl (number of cylinders: 4, 6, or 8)
+* Liter (a measure of engine size)
+* Doors (number of doors: 2, 4)
+* Cruise (1 = cruise control, 0 = no cruise control)
+* Sound (1 = upgraded speakers, 0 = standard speakers)
+* Leather (1 = leather seats, 0 = not leather seats)
+
+We start by viewing our data.
+
+```{r intro, message = FALSE, echo = TRUE}
+head(GMCars1, 5)    # Shows the first 5 rows of the data 
+```
+
+## Simple Linear Regression
+
+We will start with a simple linear regression model to predict `Price` from `Mileage`. To fit a linear regression model in R, we will use the function `lm()`.
+
+```{r SLR, exercise=TRUE}
+Cars.lm = lm(Price ~ Mileage, data = GMCars1)  # Creating a simple linear model
+coef(Cars.lm)
+summary(Cars.lm)
+```
+
+
+```{r SLR2, exercise=TRUE}
+gf_point(Price ~ Mileage, data = GMCars1) %>%
+  gf_lm(interval='confidence')
+```
+
+**Questions**
+
+* What happens to Price as Mileage increases?
+* Since the slope fo the regression line is small ( - 0.211) can we conclude it is unimportant?
+* Does mileage help you predict price? What does the $p-value = 0.011$ tell you?
+* Does mileage help you predict price? What does the $R^2 = 0.026$ tell you?
+* Are there outliers or influential observations?
+
+
+
+## Residual Plots and Model assumptions
+
+We use the following notation for our regression model:
+
+$y = \beta_0 + \beta_1*x_1  + \epsilon$
+where $\epsilon \sim N(0, \sigma)$. 
+
+When evaluating a regression model, it is useful to check the following conditions:
+
+* The model parameters ($\beta_0, \beta_1, \sigma$) are constant.
+* The error terms in the regression model are independent and have been sampled from a single population (identically distributed). This is often abbreviated as iid.
+* The error terms follow a normal probability distribution centered at zero with a fixed variance $\sigma^2$. This assumption is denoted as $\epsilon \sim N(0, \sigma)$ for $i = 1, 2,..., n$.
+
+**These conditions are only required to be met if you are conducting a hypothesis test.** However, even if you are only trying to find a model with a good fit, these conditions are important. If there are clear patterns in the residuals, it is likely that there is a better model that can be fit.
+
+Regression assumptions about the error terms are generally checked by looking at the residual plots.
+
+```{r echo = TRUE, eval = FALSE}
+GMCars1 = mutate(GMCars1, res1 = resid(Cars.lm), fits1 = fitted(Cars.lm))
+```
+
+
+```{r SLR5, exercise=TRUE}
+gf_histogram(~ res1, data = GMCars1)
+```
+
+
+```{r SLR7, exercise=TRUE}
+gf_point(res1 ~ fits1, data = GMCars1)%>%
+  gf_hline(yintercept = 0)
+```
+
+**Question**
+
+* Does the histogram indicate that the error terms are normally distributed?
+* Does the residual verses fits plot indicate equal variances for all values of `Mileage`?
+* Create a plot of Residuals vs. Mileage. Are their any clear patterns in the plot?
+* Create a plot of Residuals vs. other potential explanatory variables. Are their any clear patterns in these plots? Recall the other possible explanatory variables are Make, Type, Cyl, Liter, Doors, Cruise, Sound, and Leather. 
+
+
+
+## More than one explanatory variable
+
+While the p-value tends to give some indication that `Mileage` is important, the $R^2$ value indicates that our model is not a good fit. In addition, there was a very clear pattern in the `Residuals vs. Make` plot. Thus we will add this term into our model.
+
+```{r MRM, exercise=TRUE}
+Cars.lm2 = lm(Price ~ Mileage + Make, data = GMCars1)  # Creating a simple linear model
+```
+
+```{r echo = TRUE, eval = FALSE}
+GMCars1 = mutate(GMCars1, res2 = resid(Cars.lm2), fits2 = fitted(Cars.lm2))
+```
+
+
+```{r MRM2, exercise=TRUE}
+gf_point(Price ~ Mileage, data = GMCars1, color = ~ Make)%>%
+  gf_line(fits2 ~ Mileage)
+```
+
+We also see that our `R^2` value increased significanlty. 
+
+```{r MRM3, exercise=TRUE}
+rsquared(Cars.lm)
+
+rsquared(Cars.lm2)
+```
+
+```{r MRM4, exercise=TRUE}
+gf_histogram(~ res2, data = GMCars1)
+```
+
+
+```{r MRM5, exercise=TRUE}
+gf_point(res2 ~ fits2, data = GMCars1)%>%
+  gf_hline(yintercept = 0)
+
+gf_point(res2 ~ Mileage, data = GMCars1)%>%
+  gf_hline(yintercept = 0)
+```
+
+After plotting a few more residual plots, try creating a model that you think would be a better fit. Recall the other possible explanatory variables are Make, Type, Cyl, Liter, Doors, Cruise, Sound, and Leather. 
+
+```{r add-function, exercise=TRUE, exercise.lines = 5}
+
+
+
+```
+
+
+
+
+## Interaction Terms
+
+Notice that simply adding the `Make` variable intro our model forces the slope to be identical in all three cases. However, a closer look at the data indicates that there may be an **interaction effect** since the effect of `Mileage` on `Price` appears to depend upon the `Make` of the car. To include interaction terms in our model, we use $X_1*X_2$
+
+```{r inter1, exercise=TRUE, exercise.eval = TRUE}
+Cars.lm3 = lm(Price ~ Mileage*Make, data = GMCars1)  # Creating a simple linear model
+```
+
+
+```{r echo = TRUE, eval = FALSE}
+GMCars1 = mutate(GMCars1, res3 = resid(Cars.lm3), fits3 = fitted(Cars.lm3))
+```
+
+
+```{r inter2, exercise=TRUE}
+gf_point(Price ~ Mileage, data = GMCars1, color = ~ Make)%>%
+  gf_line(fits2~Mileage)
+
+gf_point(Price ~ Mileage, data = GMCars1, color = ~ Make)%>%
+  gf_line(fits3~Mileage)
+```
+
+We also see that our `R^2` value increased slightly.
+
+```{r inter3, exercise=TRUE}
+rsquared(Cars.lm2)
+
+rsquared(Cars.lm3)
+
+```
+
+```{r inter4, exercise=TRUE}
+gf_histogram(~ res3, data = GMCars1)
+```
+
+
+```{r inter5, exercise=TRUE}
+gf_point(res3 ~ fits3, data = GMCars1)%>%
+  gf_hline(yintercept = 0)
+
+gf_point(res3 ~ Mileage, data = GMCars1)%>%
+  gf_hline(yintercept = 0)
+```
+
+
+
+
+## What is the best possible model?
+
+We can try to find the model with the "best" $R^2$ value, by simply putting all the terms in a model. Is the $R^2$ value significantly better than our previous models?
+
+```{r full1, exercise=TRUE}
+Cars.lm4 = lm(Price ~ Mileage*Make*Doors*Type*Cyl*Liter*Cruise*Sound*Leather, data = GMCars1)
+
+summary(Cars.lm4)
+```
+
+
+This model appears to have a fairly good adjusted $R^2$ value. However, this may still not be the best model. There are many transformations, such as the $log(Price)$, that may dramatically help the model. In addition we have not made any attempt to consider quadratic or cubic terms in our model. The growing number of large data sets as well as increasing computer power has dramatically improved the ability of researchers to find a parsimonious model (a model that carefully selects a relatively small number of the most useful explanatory variables). However, even with intensive computing power, the process of finding a `best` model is often more of an art than a science.
+
+Automated multivariate regression procedures (the process of using prespecified conditions to automatically add or delete
+variables) can have some limitations:
+
+* When explanatory variables are correlated, automated procedures often fail to include variables that are useful in describing the results.
+*  Automated procedures tend to **overfit** the data (fit unhelpful variables) by searching for any terms that explain the variability in the sample results. This chance variability in the sample results may not be reflected in the entire population from which the sample was collected.
+* The automated procedures provides output that looks like a `best` model, but that can be easily misinterpreted, since it doesn’t require a researcher to explore the data to get an intuitive feel for the data. For example, automated procedures don’t encourage researchers to look at residual plots that may reveal interesting patterns within the data.
+
+
+
+## Multicollinearity
+
+**Multicollinearity** exists when two or more explanatory variables in a multiple regression model are highly correlated with each other. If two explanatory variables X1 and X2 are highly correlated, it can be very difficult to identify whether X1, X2, or both variables are actually responsible for influencing the response variable, Y.
+
+Below we use another cars dataset to determine the relationship between `Cyl` and `Liter` on `Price`.
+
+```{r echo = TRUE, eval = FALSE}
+GMCars2 <- read_csv("data/GMCars2.csv")
+```
+
+
+```{r corr1, exercise=TRUE}
+model1 = lm(Price ~ Mileage + Liter, data = GMCars2)  # Creating a simple linear model
+anova(model1)
+```
+
+```{r corr2, exercise=TRUE}
+model2 = lm(Price ~ Mileage + Cyl, data = GMCars2)  # Creating a simple linear model
+anova(model2)
+```
+
+```{r corr3, exercise=TRUE}
+model3 = lm(Price ~ Mileage + Cyl + Liter, data = GMCars2)  # Creating a simple linear model
+anova(model3)
+```
+
+
+**Questions**
+
+* In the first model, use only Mileage and Liter as the explanatory variables. Is Liter an important
+explanatory variable in this model?
+
+* In the second model, use only Mileage and number of cylinders (Cyl) as the explanatory variables.
+Is Cyl an important explanatory variable in this model?
+
+* In the third model, use Mileage, Liter, and number of cylinders (Cyl) as the explanatory variables.
+How did the test statistics and p-values change when all three explanatory variables were
+included in the model?
+
+* Compare the $R^2$ values in each model. Which model would you suggest?
+
+**In multiple regression, the p-values for individual terms are highly unreliable and should not be used to test for the importance of a variable.**
+
+
+## Goals of Multiple Regression
+
+Multiple regression analysis can be used to serve different goals. The goals will influence the type of analysis that is conducted. The most common goals of multiple regression are to describe, predict, or confirm.
+
+* Describe: A model may be developed to describe the relationship between multiple explanatory variables and the response variable.
+* Predict: A regression model may be used to generalize to observations outside the sample. Just as in simple linear regression, explanatory variables should be within the range of the sample data to predict future responses.
+* Confirm: Theories are often developed about which variables or combination of variables should be
+included in a model. For example, is mileage useful in predicting retail price? Inferential techniques can be used to test if the association between the explanatory variables and the response could just be due to chance.
+
+When trying multiple models in variable selection, hypothesis tests to evaluate the importance of any specific term are often very misleading. While variable selection techniques are useful to find a descriptive or predictive model, p-values for individual terms tend to be unreliable. To conduct a hypothesis test in multivariate regression, it is best to use the extra Sum of Squares (or Drop in Deviance) Test.
+
+With careful model building, it is possible to find a strong relationship between our explanatory variables and the price of a car. However, with any model, it is important to understand how the data was collected, and what procedures were used to create the model before using the model to make decisions.
+
+
+
+
+
+

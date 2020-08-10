@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Jarren Santos" />
+
+
+<meta name="progressive" content="false" />
+<meta name="allow-skip" content="false" />
+
+<title>An Introduction to R</title>
+
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+
+
+<div class="pageContent band">
+<div class="bandContent page">
+
+<div class="topics">
+
+<div id="section-outline" class="section level2">
+<h2>00: Outline</h2>
+<p><strong>01: R &amp; RStudio</strong></p>
+<ul>
+<li>Accessing R &amp; RStudio</li>
+<li>RStudio UI</li>
+</ul>
+<p><strong>02: Things you can do in R &amp; RStudio</strong></p>
+<ul>
+<li>R file types</li>
+<li><code>.R</code> scripts vs. <code>.Rmd</code> files</li>
+<li>Other file types</li>
+<li>RActivities</li>
+<li>Expressions
+<ul>
+<li>Data types</li>
+</ul></li>
+<li>Object assignment</li>
+<li>Functions</li>
+</ul>
+<p><strong>03: Data Structures &amp; Attributes</strong></p>
+<ul>
+<li>Data structures</li>
+<li>Attributes</li>
+<li>Basic attributes</li>
+</ul>
+<p><strong>04: Data Manipulation</strong></p>
+<ul>
+<li>Importing/exporting data</li>
+<li>Modifying variables</li>
+<li>Indexing</li>
+<li>Subsetting data
+<ul>
+<li>Logical conditions</li>
+</ul></li>
+<li>Recycling Rule</li>
+</ul>
+<p><strong>05: Programming Efficiency &amp; Style</strong></p>
+<ul>
+<li>Formatting</li>
+<li>Naming</li>
+<li><a href="https://google.github.io/styleguide/Rguide.xml">Google R Style Guide</a></li>
+<li><a href="https://www.biostat.wisc.edu/~kbroman/publications/dataorg.pdf">Data Organization in Spreadsheets</a></li>
+</ul>
+<p><strong>06: On Your Own</strong></p>
+<ul>
+<li>Assigned activities that you must complete</li>
+</ul>
+</div>
+<div id="section-r-rstudio" class="section level2">
+<h2>01: R &amp; RStudio</h2>
+<ul>
+<li>Accessing R &amp; RStudio</li>
+<li>RStudio UI
+<ul>
+<li><a href="https://www.rstudio.com/products/rstudio/">RStudio Overview</a></li>
+<li><a href="https://www.rstudio.com/products/rstudio/features/">RStudio Additional Features</a></li>
+<li>Read through <a href="https://ismayc.github.io/rbasics-book/3-rstudiobasics.html#rstudio-layout">Chapter 3.4 of “Getting used to R, RStudio, and R Markdown”</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="section-things-you-can-do-in-r-rstudio" class="section level2">
+<h2>02: Things you can do in R &amp; RStudio</h2>
+<ul>
+<li>R file types</li>
+<li><code>.R</code> scripts vs. <code>.Rmd</code> files</li>
+<li>Other file types
+<ul>
+<li>Shiny apps</li>
+<li>Plain <code>.md</code> files</li>
+<li>Misc.</li>
+</ul></li>
+<li>RActivities</li>
+<li>Expressions
+<ul>
+<li>Data types</li>
+<li>Numeric</li>
+<li>Character
+<ul>
+<li>Factors</li>
+</ul></li>
+<li>Logical</li>
+<li>Date</li>
+<li>Missing values</li>
+<li>Type conversions</li>
+</ul></li>
+<li>Object assignment</li>
+<li>Functions
+<ul>
+<li>Understanding how a function works</li>
+<li>Arguments (input)</li>
+<li>Results (output)</li>
+<li>Packages</li>
+<li><a href="https://rstudio-education.github.io/hopr/packages2.html">R Packages</a></li>
+<li><a href="https://rstudio-education.github.io/hopr/dataio.html">Updating R &amp; Its Packages</a></li>
+</ul></li>
+</ul>
+</div>
+<div id="section-data-structures-attributes" class="section level2">
+<h2>03: Data Structures &amp; Attributes</h2>
+<ul>
+<li>Data structures</li>
+<li>Vectors</li>
+<li>Matrices</li>
+<li>Lists</li>
+<li>Data frames</li>
+<li>Attributes</li>
+<li>Basic attributes
+<ul>
+<li><code>dim()</code></li>
+<li><code>nrow()</code></li>
+<li><code>ncol()</code></li>
+<li><code>colnames()</code></li>
+<li><code>str()</code></li>
+<li><code>summary()</code></li>
+</ul></li>
+</ul>
+</div>
+<div id="section-data-manipulation" class="section level2">
+<h2>04: Data Manipulation</h2>
+<ul>
+<li>Data Manipulation</li>
+<li>Importing/exporting data</li>
+<li>Modifying variables
+<ul>
+<li>Indexing</li>
+<li>Subsetting data</li>
+<li>Logical conditions</li>
+</ul></li>
+<li>Recycling Rule</li>
+</ul>
+</div>
+<div id="section-programming-efficiency-style" class="section level2">
+<h2>05: Programming Efficiency &amp; Style</h2>
+<ul>
+<li>Programming Efficiency &amp; Style</li>
+<li>Formatting</li>
+<li>Naming</li>
+<li><a href="https://google.github.io/styleguide/Rguide.xml">Google R Style Guide</a></li>
+<li><a href="https://www.biostat.wisc.edu/~kbroman/publications/dataorg.pdf">Data Organization in Spreadsheets</a></li>
+</ul>
+</div>
+<div id="section-on-your-own" class="section level2">
+<h2>06: On Your Own</h2>
+<p><strong>Read and go through the following materials:</strong></p>
+<ul>
+<li><a href="https://jjallaire.shinyapps.io/learnr-tutorial-00-setup/">Set Up for R and RStudio</a></li>
+<li>Part 1 (Chapters 1-3) of Garrett Grolemund’s <a href="https://rstudio-education.github.io/hopr/project-1-weighted-dice.html">“Hands-On Programming with R”</a></li>
+<li>Part 2 (Chapters 4-7) of Garrett Grolemund’s <a href="https://rstudio-education.github.io/hopr/project-2-playing-cards.html">“Hands-On Programming with R”</a></li>
+<li>Chapter 5 of Chester Ismay’s <a href="https://ismayc.github.io/rbasics-book/5-rmdanal.html">“Getting used to R, RStudio, and R Markdown”</a></li>
+</ul>
+<p><strong>Answer the following questions that involve both R programming and reflection:</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Answer questions in either Option #1 or Option #2 of <a href="https://remiller1450.github.io/s230s19/Intro_to_R.html">Ryan Miller’s On Your Own Questions in“A Crash Course in R”</a></p></li>
+<li><p>Are there any items in this tutorial that you think need further clarification?</p></li>
+<li><p>What are questions that you have related to R and RStudio that were not addressed in this tutorial?</p></li>
+</ol>
+</div>
+<div id="section-additional-resources-references" class="section level2">
+<h2>07: Additional Resources &amp; References</h2>
+<p>Additional Resources:</p>
+<ul>
+<li><a href="https://ismayc.github.io/rbasics-book/6-errors.html">Deciphering Common R Errors</a></li>
+</ul>
+<p>References:</p>
+<ul>
+<li><a href="http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html">Shonda’s R Tutorials in Data Science</a></li>
+<li><a href="https://remiller1450.github.io/s230s19/Intro_to_R.html">Ryan’s Crash Course in R</a></li>
+<li>Brian Smith’s Biostat Computing Materials</li>
+<li><a href="https://rstudio-education.github.io/hopr/">Hands-On Programming with R by Garrett Grolemund</a></li>
+<li><a href="https://ismayc.github.io/rbasics-book/index.html">Getting used to R, RStudio, and R Markdown by Chester Ismay and Patrick C. Kennedy</a> 
+<script type="application/shiny-prerendered" data-context="server-start">
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+ <!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap-3.3.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["5.0.13"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/fontawesome"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/fontawesome-all.min.js","js/fa-v4-shims.min.js"]},{"type":"character","attributes":{},"value":["css/fa-svg-with-js.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["4.4.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["localforage"]},{"type":"character","attributes":{},"value":["1.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/localforage"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["localforage.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]}]}
+</script>
+<!--/html_preserve--></li>
+</ul>
+</div>
+
+</div> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h2 class="title toc-ignore" style="display:none;">An Introduction to R</h2>
+<h4 class="author"><em>Jarren Santos</em></h4>
+<h4 class="date"><em>last updated 05/23/2019</em></h4>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</div> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,237 @@
+---
+title: "Introduction to Tidy Data in R"
+output: 
+  learnr::tutorial:
+   progressive: false
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyr)     # contains tools to tidy data
+library(ggformula) # for plotting
+library(dplyr)
+library(readr)
+knitr::opts_chunk$set(echo = FALSE)
+
+UBSprices <- read.csv("data/UBSprices.csv", as.is = TRUE)
+Polls <- read.csv("data/rcp-polls.csv", na.strings = "--", as.is = TRUE)
+Airlines <- read.csv("data/airline-safety.csv", as.is = TRUE)
+
+tidy_ubs <- gather(data = UBSprices, key = year, value = price, rice2003, rice2009)
+
+Polls2 <- separate(data = Polls, col = Date, into = c("Begin", "End"), sep = " - ")
+Polls3 <- separate(data = Polls2, col = Sample, into = c("size", "population"), sep = " ")
+Polls4 <- gather(data = Polls3, key = candidate, value = percentage, 7:10)
+
+
+Airlines2 <- gather(Airlines, key = accidents, value = count, 3:8)
+Airlines3 <- separate(Airlines2, accidents, into = c("var", "years"), sep = "[.]")
+Airlines4 <- spread(data = Airlines3, key = var, value = count)
+
+```
+
+
+##Introduction 
+
+In this tutorial, we focus using the `tidyr` package to organize data into a format that can be easily used in analysis.
+
+In R, it is easiest to work with data that follow five basic rules:
+
+1. Every **variable** is stored in its own **column**.
+2. Every observation is stored in its own **row**---that is, every row corresponds to a single **case**.
+3. Each **value** of a variable is stored in a **cell** of the table.
+4. Values should not contain units. Rather, units should be specified in the supporting documentation for the data set, often called a *codebook*.
+5. There should be no extraneous information (footnotes, table titles, etc.).
+
+A data set satisfying these rules is said to be **tidy**, a term popularized by Hadley Wickham.
+
+**Remark**: Most of the time data that violate rules 4 and 5 are obviously not tidy, and there are easy ways to exclude footnotes and titles in spreadsheets by simply omitting the offending rows. This tutorial focuses on the "sneakier" form of untidiness that violates at least one of the first three rules.
+
+
+This tutorial will describe the following `tidyr` commands, which can be thought of as verbs for tidying data:
+
+
+Command      | Meaning
+------------ | --------
+`gather`     | collapses multiple columns into two columns
+`spread`     | creates multiple columns from two columns
+`separate`   | splits compound variables into individual columns
+
+
+
+##2. Tidying longitudinal data (`gather`)
+
+UBS (derived from the Union Bank of Switzerland) is an international bank that reports prices of various staples in major cities every three years. The data set in the `UBSprices` data set contains prices of a 1 kg bag of rice in 2009 and 2003 in major world cities. 
+
+```{r 2a,exercise=TRUE}
+head(UBSprices)
+```
+
+This data set is not tidy because each row contains two cases: the city in 2003 and the city in 2009. Additionally, one of our variables of interest, **year**, is given in the column names `2003` and `2009`. Instead, **year** should provided in just one column. In order to tidy these data, we need to 
+
+1. Reorganize the data so that each row corresponds to a city in a specific year.
+2. Create a single variable for the price of rice.
+3. Add a variable for year.
+
+To do this, we will use the `gather` function in the `tidyr` package. `gather` collapses multiple columns into two columns: a **key** column and a **value** column. The **key** will be a new variable containing the old column names and the **value** will contain the information recorded in the cells of the collapsed columns.
+
+In our example, we want to collapse the original two columns, `rice2003` and `rice2009`, into the key-value pair `year` and `price`. To do this, we use the following command:
+
+```{r 2b,exercise=TRUE}
+tidy_ubs <- gather(data = UBSprices, key = year, value = price, rice2003, rice2009)
+head(tidy_ubs)
+```
+
+**Remarks**
+
+* The first argument passed to `gather` should be the data frame being tidied. This is true for all of the `tidyr` functions we discuss in this tutorial.
+* After specifying the data frame, the next two arguments specify the column names you wish to give to two new columns. One column is called the **key** and the other is called the **values**.
+* After naming our **key** and **values** columns, we list all the origianl columns we wish to collapse, separated by commas. Notice that the original column names are now listed in the key column and the original cell values are now all in one column.
+
+
+**On Your Own**
+
+1) How are the number of rows adjusted by using the `gather` command? Use the `dim(UBSprices)` command to determine how many rows are in the **UBSprices** data set and `dim(tidy_ubs)` to determine how many are in the **tidy_ubs** data set).
+
+```{r 2-c,exercise=TRUE,exercise.lines=5}
+
+
+```
+
+2) How many rows would there be if used the gather command and the original **UBSprices** data set had five columns of  years: `rice2003`, `rice2006`, `rice2009`, `rice2012`, and `rice2015`? 
+
+
+#### Removing Text
+Finally, we will modify the year column by removing the word rice from each cell. To do this, we can use the `extract_numeric` function in the `tidyr` package.
+We now have a data set that we can call tidy.
+
+```{r 2-e,exercise=TRUE}
+tidy_ubs$year <- extract_numeric(tidy_ubs$year)
+head(tidy_ubs)
+```
+
+
+**Remark** 
+
+This data set started in a relatively tidy form, so it may be difficult to see the benefit of tidying it. Tidy data is typically required for summarizing and plotting data in R. For example, consider making a side-by-side boxplot using `ggformula` (see the tutorial [An Introduction to ggformula](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html)).
+
+```{r 2-f,exercise=TRUE}
+tidy_ubs %>%
+  gf_boxplot(price ~ factor(year)) %>%
+  gf_labs(x = "year")
+```
+
+This was straightforward since **tidy_ubs** was already tidy, but would have required extra manipulation in the original format. 
+
+
+##3. Tidying pollster data (`separate + gather`)
+
+The **Polls** data set contains the results of various presidential polls conducted during July 2016, and was scraped from  [RealClear Politics](http://www.realclearpolitics.com/epolls/latest_polls/president/).
+
+```{r 3a,exercise=TRUE}
+head(Polls)
+```
+
+
+Here, the data set is not tidy because
+
+* The `Date` column contains both the beginning and end dates. These should be stored in separate columns.
+* The `Sample` column contains two variables: the number of people in the sample and the population that was sampled (likely voters or registered voters). These should be stored in separate columns.
+* The last four column names are values of `candidate` and `party` variables, which should be stored in their own columns. 
+
+To break a single character column into multiple new columns we use the `separate` function in the `tidyr` package.
+
+To begin, let's break the `Date` column into `Begin` and `End` columns:
+
+```{r 3b,exercise=TRUE}
+Polls2 <- separate(data = Polls, col = Date, into = c("Begin", "End"), sep = " - ")
+head(Polls2)
+```
+
+**Remarks**
+
+* The second argument, `col`, specifies the name of the column to be split.
+* The third argument, `into`, specifies the names of the new columns. Note that  since these are specific column names we are creating, they should be given in quotes.
+* R will try to guess how the values should be separated by searching for non-alphanumeric values; however, if there are multiple non-alphanumeric values this may fail. In this example, if we did not specify that `sep = " - "`, then R would erroneously use `\` as the separator. To manually specify the separator between columns we can place the character(s) in quotes. 
+* In `sep = " - "`, the spaces around `-` avoid excess whitespace in the resulting cell values.
+
+
+In the space below, separate the `Sample` column into `size` and `population` columns. Here we will use `sep = " "` to identify that a blank space is used as the separator. If you have difficulty, click the hint button.
+
+```{r 3c,exercise=TRUE}
+Polls3 <- separate(data = Polls2, col = Sample, into = c("size", "population"), sep = " ")
+head(Polls3)
+```
+
+Next, we need to `gather` the last four columns into a `candidate` variable.
+
+```{r 3d,exercise=TRUE}
+Polls4 <- gather(data = Polls3, key = candidate, value = percentage, 7:10)
+head(Polls4)
+```
+
+Notice that instead of writing out the column names (`Clinton..D.`, `Trump..R.`, etc.) we can simply specify the column numbers---here `7:10` specifies that we are gathering columns 7 through 10.
+
+Finally, we need to `separate` the candidate names from the political party. 
+
+```{r 3e,exercise=TRUE}
+Polls5 <- separate(Polls4, candidate, into= c("candidate", "party"))
+head(Polls5)
+```
+
+
+**Remark**
+
+In the last command we let R guess which separator to use. This worked, but resulted in a warning message---we're lucky that it worked! There are many situations where the separator is too complex for R to guess correctly and it cannot be specified using a simple character in quotes. In such cases we need to use regular expressions (see the tutorial [Manipulating Text](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html)) to aid our data tidying, but that's a topic for another tutorial. The important thing to note here is that you should <u>always check</u> that `separate` worked as you expected, don't blindly trust it!
+
+##Part 4. Tidying crash data (`gather + separate + spread`)
+
+The **airlines** data set contains the [raw data](https://github.com/fivethirtyeight/data/tree/master/airline-safety) behind the article [Should Travelers Avoid Flying Airlines That Have Had Crashes in the Past?](http://fivethirtyeight.com/features/should-travelers-avoid-flying-airlines-that-have-had-crashes-in-the-past/) that appeared on [fivethirtyeight.com](http://fivethirtyeight.com/).
+
+```{r 4a,exercise=TRUE}
+head(Airlines)
+```
+
+In this example, a case is best described as an airline in a specific time frame, so these data are not tidy because each case is not its own row. Additionally, the last six column names contain the time frame, which is a value. In order to tidy this data set we must
+
+* have each row respresent an airlines in a specific time frame,
+* create a `years` column to specify the time frame,
+* and create columns for each type of accident: `incidents`, `fatal_accidents`, and `fatalities`.
+
+First, we `gather` the last six columns into a common `accidents` column. This will allow us to easily create the `years` column.
+
+```{r 4b,exercise=TRUE}
+Airlines2 <- gather(Airlines, key = accidents, value = count, 3:8)
+head(Airlines2)
+```
+
+Next, we `separate` the values of the new `accidents` column into `var` (short for variable) and `years`. The default guessing scheme fails here, so we must specify `sep = "[.]"` to denote that the period is the separator. If you want to learn more about why we need brackets around the period you need to delve into regular expressions (see the tutorial [Manipulating Text](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html)).
+
+```{r 4c,exercise=TRUE}
+Airlines3 <- separate(Airlines2, accidents, into = c("var", "years"), sep = "[.]")
+head(Airlines3)
+```
+
+
+Finally, we need to ensure that each row corresponds to a case. (Don't worry, this will also make each column a variable!) Currently, there are six rows for each airline: one for each `var` in each time frame. To solve this problem, we need to `spread` out the `var` column so that each variable has its own column.
+
+```{r 4d,exercise=TRUE}
+Airlines4 <- spread(data = Airlines3, key = var, value = count)
+head(Airlines4)
+```
+
+**Remark**
+
+Notice that the first argument given to `spread` is the data frame, followed by the key-value pair. The key is the name of the column whose values will be used as column headings and the value is the name of the column whose values will populate the cells of the new columns. In this example, we use `var` as the key and populate the cells with the `count`.
+
+##5. References and resources
+
+* [RStudio's data wrangling cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf) provides a nice summary of how to reshape data sets and a quick reminder of the definition of tidy data.
+
+* The [`tidyr` vignette](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) provides additional examples and elaborates on the capabilities of the `tidyr` package.
+
+* See more tutorials at [Stat2Labs](http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html).
+
+
+

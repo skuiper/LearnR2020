@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="progressive" content="false" />
+<meta name="allow-skip" content="false" />
+
+<title>Creating Graphs with ggformula</title>
+
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+
+
+<div class="pageContent band">
+<div class="bandContent page">
+
+<div class="topics">
+
+<div id="section-introduction" class="section level2">
+<h2>1. Introduction</h2>
+<p>It is often necessary to create graphs to effectively communicate key patterns within a dataset. Many software packages allow the user to make basic plots, but it can be challenging to create plots that are customized to address a specific idea. While there are numerous ways to create graphs, this tutorial will focus on the R package <strong>ggformula</strong>, created by Danny Kaplan and Randy Pruim.</p>
+<p><strong>Data</strong>: In this tutorial, we will use the <a href="http://www.amstat.org/publications/jse/v19n3/decock.pdf">AmesHousing</a> data, which provides information on the sales of individual residential properties in Ames, Iowa from 2006 to 2010. The data set contains 2930 observations, and a large number of explanatory variables involved in assessing home values. A full description of this dataset can be found <a href="http://jse.amstat.org/v19n3/decock/DataDocumentation.txt">here</a>.</p>
+<p>To start, we will focus on just a few variables:</p>
+<ul>
+<li><code>SalePrice</code>: The sale price of the home</li>
+<li><code>GrLivArea</code>: The above ground living area in the home (in square feet)</li>
+<li><code>Fireplaces</code>: The number of fireplaces in the home</li>
+<li><code>KitchenQualily</code>: The quality rating of the kitchen (Excellent, Good, Average, Fair, or Poor)</li>
+</ul>
+<p>Select the <strong>Run Code</strong> button on the right to run the code in the section below.</p>
+<div class="tutorial-exercise" data-label="task1" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># The code below uses the head() function to view the first four lines of the AmesHousing data.
+head(AmesHousing, 4)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p><strong>On Your Own</strong></p>
+<ul>
+<li>Modify the code above to use the ‘tail()’ function to view the last 10 rows of the AmesHousing data.</li>
+<li>View the last ten rows and verify that the sales price of the house in row 2925 is 131000.</li>
+</ul>
+<div id="section-the-structure-of-functions-in-the-ggformula-package" class="section level3">
+<h3>The structure of functions in the ggformula package</h3>
+<p>The <strong>ggformula</strong> package is based on another graphics package called <strong>ggplot2</strong>. It provides an interface that makes coding easier for people new to coding in R. One primary benefit is that it follows the same intuitive structure provided by the creators of the <a href="https://cran.r-project.org/web/packages/mosaic/mosaic.pdf">mosaic package</a>.</p>
+<h3 style="text-align: center;">
+goal ( y ~ x , data = mydata, … )
+</h3>
+<p>For example, if our goal is to create a scatterplot in <strong>ggformula</strong>, we use the function called <code>gf_point()</code>, to create a graph with points. We then use <code>SalePrice</code> as our y variable and <code>GrLivArea</code> as our x variable. The <code>...</code> indicates that we have an option to add additional code, but it is not required.</p>
+<div class="tutorial-exercise" data-label="task2" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Create a scatterplot of above ground living area by sales price
+gf_point(SalePrice ~ GrLivArea, data = AmesHousing)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+</div>
+</div>
+<div id="section-making-modifications-to-scatterplots-with-ggformula" class="section level2">
+<h2>2. Making Modifications to Scatterplots with ggformula</h2>
+<p>It is easy to make modifications to the color, shape and transparency of the points in a scatterplot.</p>
+<div class="tutorial-exercise" data-label="task3" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Create a scatterplot with log transformed variables, coloring by a third variable
+gf_point(log(SalePrice) ~ log(GrLivArea), data = AmesHousing, color = &quot;navy&quot;, shape = 15, alpha = .2)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p><strong>On Your Own</strong></p>
+<ul>
+<li>In the code above, adjust <code>alpha</code> to any values between 0 and 1. How does changing <code>alpha</code> modify the points on a graph?</li>
+<li>Adjust the shape values. For example, what symbol is used when <code>shape = 1</code>?</li>
+<li>Run the above code using <code>color = ~ KitchenQuality</code>. What color corresponds to Kitchen Quality = Good?</li>
+</ul>
+<p>Notice that fixed color names are given in quotes, <code>color = &quot;navy&quot;</code>. However, if we select colors based upon a variable from our data frame, we treat it as an explanatory variable, <code>~ x</code>, in our model.</p>
+<p>The scatterplots above suffer from overplotting, that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In <strong>ggformula</strong>, this is easily done using the gf_facet_grid() layer.</p>
+<p>We can use the pipe operator <code>%&gt;%</code> to add a new layer into a graph. This pipe operator is an easy way to create a chain of processing actions by allowing an intermediate result (left of the %&gt;%) to become the first argument of the next function (right of the %&gt;%). Below we start with a scatterplot and then assign that scatterplot to the <code>gf_facet_grid()</code> function to create distinct panels for each type of kitchen quality. Then the result is again passed to the <code>gf_labs()</code> function, which adds titles and labels to the graph.</p>
+<div class="tutorial-exercise" data-label="task4" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Create distinct scatterplots for each type of kitchen quality
+gf_point(SalePrice/100000 ~ GrLivArea, data = AmesHousing) %&gt;%
+  gf_facet_grid(KitchenQuality ~ . ) %&gt;%
+  gf_labs(title = &quot;Figure 3: Housing Prices in Ames, Iowa&quot;,
+          y = &quot;Sale Price (in $100,000)&quot;,
+          x = &quot;Above Ground Living Area&quot;)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>Figure 3 facets the scatterplot by Kitchen Quality. In Figure 4, we overplot these graphs, and use color and shape to identify the Kitchen Quality. Both graphs allow us to look at Sale Price by Above Ground Living Area and Kitchen Quality at the same time. Often, researchers create multiple graphs to determine which best shows patterns within the data. Figure 4 allows us to more clearly see the effect of Kitchen Quality on the Sale Price, however, it is still difficult to see many of the points.</p>
+<div class="tutorial-exercise" data-label="task5" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gf_point(SalePrice/100000 ~ GrLivArea, data = AmesHousing, shape = ~ KitchenQuality, color = ~ KitchenQuality) %&gt;% 
+  gf_lm() %&gt;% 
+  gf_labs(title = &quot;Figure 4: Housing Prices in Ames, Iowa&quot;,
+          y = &quot;Sale Price (in $100,000)&quot;, 
+          x = &quot;Above Ground Living Area&quot;)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p><strong>Remarks:</strong></p>
+<ul>
+<li>The code <code>gf_lm()</code> adds a linear model to the graph in Figure 4. If you use <code>gf_smooth()</code>, A smooth curve will be fit to the data.</li>
+<li>Both <code>gf_facet_grid</code> and <code>gf_facet_wrap</code> commands are used to create multiple plots. Try incorporating <code>gf_facet_wrap( ~ KitchenQuality)</code> or <code>gf_facet_grid(Fireplaces ~ KitchenQuality)</code> into a scatterplot to see how it separates each graph by a categorical variable. Note that <code>gf_facet_grid(KitchenQuality ~ . )</code> indicates that we should facet by the y axis and not by the x axis.</li>
+<li>When assigning fixed characteristics (such as <code>color</code>, <code>shape</code> or <code>size</code>), the commands include quotes, such as <code>color = &quot;green&quot;</code>. When characteristics are dependent on the data, the command should occur without quotes, such as <code>color = ~ KitchenQuality</code>.</li>
+</ul>
+</div>
+<div id="section-creating-more-graphs-with-ggformula" class="section level2">
+<h2>3. Creating More Graphs with ggformula</h2>
+<p>The previous examples focused on scatterplots. The <a href="https://cran.r-project.org/web/packages/ggformula/ggformula.pdf">ggformula description</a> lists multiple graphs and gives detailed examples of how they are used. You can also use the tab completion feature in RStudio (type <code>gf_</code> and hit the <code>Tab</code> key on your console) to see options for most graphs.</p>
+<p>In this section we will build upon the same <code>y ~ x</code> format for every <strong>ggformula</strong> plot and demonstrate several additional types of graphs that can be made.</p>
+<h3 style="text-align: center;">
+goal ( y ~ x | z, data = …)
+</h3>
+<p>where</p>
+<ul>
+<li>y: is y-axis variable</li>
+<li>x: is x-axis variable</li>
+<li>z: conditioning variable (separate panels)</li>
+</ul>
+<p>In general <code>y ~ x | z</code> can be read <code>y is modeled by (or depends on) x differently for each z</code>. This is just like using the facet commands. For example, the following code creates a jitter plot that incorporates two explanatory variables, <code>KitchenQualily</code> and <code>Fireplaces</code>. We then use the pipe operator to add boxplots and labels.</p>
+<div class="tutorial-exercise" data-label="task6" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gf_jitter(log(SalePrice) ~ KitchenQuality | Fireplaces , data = AmesHousing, color = &quot;lightblue&quot;) %&gt;%
+gf_boxplot(alpha = .05) %&gt;%
+  gf_labs(title = &quot;Figure 5: Housing Prices in Ames, Iowa&quot;,
+          subtitle = &quot;Faceted by Number of Fireplaces&quot;,
+          y = &quot;Log(Sale Price)&quot;)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>When we are working with univariate graphs, we still keep our structure of <code>y ~ x | z</code>. For example if we want a histogram of SalePrice, we only have one <code>x</code> variable, so it is coded <code>gf_histogram(~ SalePrice, data = AmesHousing)</code> to indicate that there is no y variable in our graph. In the code below we create a histogram for SalePrice, colored for each level of KithchenQuality.</p>
+<div class="tutorial-exercise" data-label="task7" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gf_histogram(~ SalePrice, data = AmesHousing, color = ~ KitchenQuality, fill = ~ KitchenQuality) </code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p><strong>On Your Own</strong></p>
+<ul>
+<li>What is the difference between <code>gf_jitter</code> and <code>gf_point</code>?</li>
+<li><p>Which of the following will create distinct histograms of the sale price for each level of kitchen quality?</p>
+<ul>
+<li>gf_histogram(~ SalePrice | KitchenQuality, data = AmesHousing)</li>
+<li>gf_histogram(~ SalePrice, data = AmesHousing) %&gt;% gf_facet_grid(KitchenQuality ~ . )</li>
+<li>gf_histogram(~ SalePrice, data = AmesHousing) %&gt;% gf_facet_grid(. ~ KitchenQuality)</li>
+</ul></li>
+</ul>
+</div>
+<div id="section-modifying-data-for-better-graphics" class="section level2">
+<h2>4. Modifying Data for Better Graphics</h2>
+<p>You may notice in the earlier graphs that there are very few houses with more than two fireplaces and only one house that was categorized as having poor kitchen quality. Before going further we will remove these rare points using the <strong>dplyr</strong> package. These functions are described in a separate tutorial (see examples in the <a href="http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html">Stat2Labs</a> Website).</p>
+<div class="tutorial-exercise" data-label="task8" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousing2 &lt;- AmesHousing %&gt;%
+  filter(Fireplaces &lt; 3) %&gt;%
+  filter(KitchenQuality != &quot;Poor&quot;)
+
+tally(Fireplaces~KitchenQuality, data = AmesHousing2)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>By removing rare points Figure 5 is now easier to read. We no longer have an entire panel representing just one data point. Modify the code below to have Fireplaces on the x-axis and facet by kitchen Quality.</p>
+<div class="tutorial-exercise" data-label="task9" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gf_jitter(log(SalePrice) ~ KitchenQuality |Fireplaces , data = AmesHousing2, color = &quot;lightblue&quot;) %&gt;%
+gf_boxplot(alpha = .05) %&gt;%
+  gf_labs(title = &quot;Figure 5B: Housing Prices in Ames, Iowa&quot;,
+          subtitle = &quot;Faceted by Number of Fireplaces&quot;,
+          y = &quot;Log(Sale Price)&quot;)</code></pre>
+<img src="ggformulaMakingGraphs_files/figure-html/task9-1.png" width="624" />
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="task9-hint" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gf_jitter(log(SalePrice) ~ Fireplaces | KitchenQuality , data = AmesHousing2, color = &quot;lightblue&quot;) %&gt;%
+gf_boxplot(alpha = .05) %&gt;%
+  gf_labs(title = &quot;Figure 5B: Housing Prices in Ames, Iowa&quot;,
+          subtitle = &quot;Faceted by KitchenQuality&quot;,
+          y = &quot;Log(Sale Price)&quot;)</code></pre>
+</div>
+<p>A graph using <code>Fireplaces</code> as our x-variable no longer creates separate boxplots for each level of the <code>Fireplaces</code> variable. The reason for this is that in this data frame, each element of the <code>Fireplaces</code> column is considered an integer value. When variables are quantitative, some graphs cannot identify specific levels of fireplaces. Before we can create a distinct boxplots based upon the number of fireplaces, we need to treat <code>Fireplaces</code> as a <strong>factor</strong> (a qualitative variable).</p>
+<div id="section-influence-of-data-types-on-graphics" class="section level3">
+<h3>Influence of data types on graphics:</h3>
+<p>If you use the <code>str</code> command, you will notice that each variable is assigned one of the following <code>types</code> of data:</p>
+<ul>
+<li><code>int</code> integer values</li>
+<li><code>dbl</code> doubles or real numbers</li>
+<li><code>chr</code> character values (strings of letters or symbols)</li>
+<li><code>lgl</code> logical values that contain only TRUE or FALSE.</li>
+<li><code>fctr</code> factors (categorical variables with fixed values)</li>
+<li><code>date</code> dates</li>
+</ul>
+<div class="tutorial-exercise" data-label="task10" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>str(AmesHousing2)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>In the following code, we use the <code>dplyr</code> package to create a new variable, called <strong>Fireplace2</strong>. The <code>as.factor</code> command creates a <strong>factor</strong>, which is a variable that contains a set of numeric codes with character-valued levels. Try recreating Figure 5 below, using <code>Fireplace2</code> on the x-axis and facet by <code>KitchenQuality</code>.</p>
+<div class="tutorial-exercise" data-label="task11" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousing2 &lt;- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+str(AmesHousing2)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="task11-hint" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousing2 &lt;- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+gf_jitter(log(SalePrice) ~ Fireplace2 | KitchenQuality , data = AmesHousing2, color = &quot;lightblue&quot;) %&gt;%
+gf_boxplot(alpha = .05) %&gt;%
+  gf_labs(title = &quot;Figure 5B: Housing Prices in Ames, Iowa&quot;,
+          subtitle = &quot;Faceted by KitchenQuality&quot;,
+          y = &quot;Log(Sale Price)&quot;)</code></pre>
+</div>
+<p>Modify the code below to create density plot using the new categorical variable <code>Fireplace2</code> instead of the integer valued term, <code>Fireplaces</code>. Notice that the <code>color</code> and <code>fill</code> command now work properly for <code>Fireplace2</code>, but not for <code>Fireplaces</code>.</p>
+<div class="tutorial-exercise" data-label="task12" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousing2 &lt;- mutate(AmesHousing2, Fireplace2 = as.factor(Fireplaces))
+
+gf_density(~ SalePrice, data = AmesHousing2, color = ~ Fireplaces, fill = ~ Fireplaces)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<p>**Remarks</p>
+<ul>
+<li><p>Typing in a function will show you what attributes can be used. For example if you type <code>gf_histogram()</code> in one of the code chunks above a summarized output will be displayed showing that in addition to <code>alpha</code>, <code>color</code>, and <code>fill</code>, additional attributes such as <code>binwidth</code>, <code>linetype</code>, and <code>size</code> can be used.</p></li>
+<li><p>Specific details can be found for any funciton in <code>ggformula</code>. For example, typing <code>?gf_histogram()</code> in one of the code chunks will bring you to a new website with examples and more details about this funciton.</p></li>
+<li><p>In the above examples, only a few functions are listed. The <a href="https://cran.r-project.org/web/packages/ggformula/ggformula.pdf">ggformula description</a> lists each function and gives detailed examples of how they are used. You can also use the tab completion feature in RStudio (type <code>gf_</code> and hit the Tab key on your console) to see options for most graphs.</p></li>
+</ul>
+</div>
+</div>
+<div id="section-on-your-own" class="section level2">
+<h2>5. On Your Own</h2>
+<p>In order to complete this activity, you will need to use the <code>dplyr</code> package to manipulate the dataset before making any graphics. If you have not yet worked with the <code>dplyr</code> package, hints are provided to help with the first several items listed below.</p>
+<ul>
+<li>Restrict the <code>AmesHousingFull</code> data to only sales under normal conditions. In other words, <code>Condition1 == Norm</code>. How many homes were sold under normal conditions?</li>
+<li>Create a new variable called <code>TotalSqFt = GrLivArea  +  TotalBsmtSF</code> and remove any homes with more than 5000 total square feet. How many homes sold under normal conditions were greater than 5000 total square feet?</li>
+<li>Create a new variable, where <code>No</code> indicates no fireplaces in the home and <code>Yes</code> indicates at least one fireplace in the home. How many of the remaining houses have at least one fireplace?</li>
+<li>With this modified data file, create a graphic involving no more than three explanatory variables that portrays how to estimate sales price. For example, in previous graphics we used kitchen quality, above ground square footage, and number of fireplaces to estimate sale price.</li>
+</ul>
+<div class="tutorial-exercise" data-label="task13" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>str(AmesHousingFull)</code></pre>
+<script type="application/json" data-opts-chunk="1">{"fig.width":6.5,"fig.height":4,"fig.retina":2,"fig.align":"default","fig.keep":"high","fig.show":"asis","out.width":624,"warning":true,"error":false,"message":true,"exercise.df_print":"paged","exercise.checker":"NULL"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="task13-hint-1" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>tally(~ Condition1, data = AmesHousingFull)
+AmesHousingFull &lt;- filter(AmesHousingFull, Condition1 == &quot;Norm&quot;)
+dim(AmesHousingFull)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="task13-hint-2" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousingFull &lt;- mutate(AmesHousingFull, TotalSqFt = GrLivArea + TotalBsmtSF)
+AmesHousingFull &lt;- filter(AmesHousingFull, TotalSqFt &lt;= 5000)
+dim(AmesHousingFull)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="task13-hint-3" data-caption="Code" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>AmesHousingFull &lt;- mutate(AmesHousingFull, Fireplace = ifelse(Fireplaces == 0, &quot;No&quot;, &quot;Yes&quot;))
+tally(~ Fireplace, data = AmesHousingFull)</code></pre>
+</div>
+</div>
+<div id="section-references-and-resources" class="section level2">
+<h2>6. References and Resources</h2>
+<ul>
+<li><p>The <a href="http://web.grinnell.edu/individuals/kuipers/stat2labs/RTutorials.html">Stat2Labs</a> Website includes several additional tutorials and datasets. The is also available on our <a href="https://github.com/ds4stats">GitHub Site</a>.</p></li>
+<li><p><a href="https://www.rdocumentation.org/packages/ggformula/versions/0.7.0" class="uri">https://www.rdocumentation.org/packages/ggformula/versions/0.7.0</a>: A full description of the ggformula package.</p></li>
+<li><p><a href="https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf" class="uri">https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf</a>: Data Visualization with ggplot2 Cheat Sheet. Note that this sheet lists several shape scales and color scales that can be used within <strong>ggformula</strong>.</p></li>
+<li>The default color schemes are often not ideal. In some cases, it can be difficult to perceive differences between categories. To learn more about color schemes, see Roger Peng’s discussion of plotting and colors in R, <a href="https://www.youtube.com/watch?v=HPSrjKt-e8c" class="uri">https://www.youtube.com/watch?v=HPSrjKt-e8c</a>, or the R Graph Gallery, <a href="https://www.r-graph-gallery.com/" class="uri">https://www.r-graph-gallery.com/</a>. 
+<script type="application/shiny-prerendered" data-context="server-start">
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+
+# This tutorial will use the following packages
+library(ggplot2)
+library(ggformula)
+library(mosaic)
+
+# The csv file should be imported into RStudio:
+AmesHousingFull <- read.csv("data/AmesHousing.csv")
+AmesHousingFull$KitchenQuality <- 
+      ifelse(AmesHousingFull$KitchenQual == "Ex","Excellent", 
+      ifelse(AmesHousingFull$KitchenQual == "Gd", "Good",
+      ifelse(AmesHousingFull$KitchenQual == "TA","Average",
+      ifelse(AmesHousingFull$KitchenQual == "Fa", "Fair", "Poor")))) 
+
+# AmesHousingFull$Fireplaces <- as.factor(AmesHousingFull$Fireplaces)
+AmesHousing <- select(AmesHousingFull, SalePrice, GrLivArea, Fireplaces, KitchenQuality)
+
+# Needed Cleaning 
+AmesHousing2 <- AmesHousing %>%
+  filter(Fireplaces < 3) %>%
+  filter(KitchenQuality != "Poor")
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task1-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task1-code-editor`)), session)
+output$`tutorial-exercise-task1-output` <- renderUI({
+  `tutorial-exercise-task1-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task2-code-editor`)), session)
+output$`tutorial-exercise-task2-output` <- renderUI({
+  `tutorial-exercise-task2-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task3-code-editor`)), session)
+output$`tutorial-exercise-task3-output` <- renderUI({
+  `tutorial-exercise-task3-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task4-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task4-code-editor`)), session)
+output$`tutorial-exercise-task4-output` <- renderUI({
+  `tutorial-exercise-task4-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task5-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task5-code-editor`)), session)
+output$`tutorial-exercise-task5-output` <- renderUI({
+  `tutorial-exercise-task5-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task6-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task6-code-editor`)), session)
+output$`tutorial-exercise-task6-output` <- renderUI({
+  `tutorial-exercise-task6-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task7-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task7-code-editor`)), session)
+output$`tutorial-exercise-task7-output` <- renderUI({
+  `tutorial-exercise-task7-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task8-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task8-code-editor`)), session)
+output$`tutorial-exercise-task8-output` <- renderUI({
+  `tutorial-exercise-task8-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task9-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task9-code-editor`)), session)
+output$`tutorial-exercise-task9-output` <- renderUI({
+  `tutorial-exercise-task9-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task10-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task10-code-editor`)), session)
+output$`tutorial-exercise-task10-output` <- renderUI({
+  `tutorial-exercise-task10-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task11-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task11-code-editor`)), session)
+output$`tutorial-exercise-task11-output` <- renderUI({
+  `tutorial-exercise-task11-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task12-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task12-code-editor`)), session)
+output$`tutorial-exercise-task12-output` <- renderUI({
+  `tutorial-exercise-task12-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-task13-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-task13-code-editor`)), session)
+output$`tutorial-exercise-task13-output` <- renderUI({
+  `tutorial-exercise-task13-result`()
+})
+</script>
+ <!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap-3.3.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery-1.11.3"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["5.0.13"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/fontawesome"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/fontawesome-all.min.js","js/fa-v4-shims.min.js"]},{"type":"character","attributes":{},"value":["css/fa-svg-with-js.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["4.4.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["localforage"]},{"type":"character","attributes":{},"value":["1.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/localforage"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["localforage.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.9.2.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]}]}]}
+</script>
+<!--/html_preserve--></li>
+</ul>
+</div>
+
+</div> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h2 class="title toc-ignore" style="display:none;">Creating Graphs with ggformula</h2>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</div> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+
+</html>
