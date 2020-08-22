@@ -130,7 +130,7 @@ gf_point(Price ~ Mileage, data = GMCars1, color = ~ Make)%>%
   gf_line(fits2 ~ Mileage)
 ```
 
-We also see that our `R^2` value increased significanlty. 
+We also see that our $R^2$ value increased significantly. 
 
 ```{r MRM3, exercise=TRUE}
 rsquared(Cars.lm)
@@ -184,7 +184,7 @@ gf_point(Price ~ Mileage, data = GMCars1, color = ~ Make)%>%
   gf_line(fits3~Mileage)
 ```
 
-We also see that our `R^2` value increased slightly.
+We also see that our $R^2$ value increased slightly.
 
 ```{r inter3, exercise=TRUE}
 rsquared(Cars.lm2)
@@ -244,17 +244,17 @@ GMCars2 <- read_csv("data/GMCars2.csv")
 
 ```{r corr1, exercise=TRUE}
 model1 = lm(Price ~ Mileage + Liter, data = GMCars2)  # Creating a simple linear model
-anova(model1)
+summary(model1)
 ```
 
 ```{r corr2, exercise=TRUE}
 model2 = lm(Price ~ Mileage + Cyl, data = GMCars2)  # Creating a simple linear model
-anova(model2)
+summary(model2)
 ```
 
 ```{r corr3, exercise=TRUE}
 model3 = lm(Price ~ Mileage + Cyl + Liter, data = GMCars2)  # Creating a simple linear model
-anova(model3)
+summary(model3)
 ```
 
 

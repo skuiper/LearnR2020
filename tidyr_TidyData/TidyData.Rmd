@@ -87,7 +87,7 @@ head(tidy_ubs)
 
 * The first argument passed to `gather` should be the data frame being tidied. This is true for all of the `tidyr` functions we discuss in this tutorial.
 * After specifying the data frame, the next two arguments specify the column names you wish to give to two new columns. One column is called the **key** and the other is called the **values**.
-* After naming our **key** and **values** columns, we list all the origianl columns we wish to collapse, separated by commas. Notice that the original column names are now listed in the key column and the original cell values are now all in one column.
+* After naming our **key** and **values** columns, we list all the original columns we wish to collapse, separated by commas. Notice that the original column names are now listed in the key column and the original cell values are now all in one column.
 
 
 **On Your Own**
@@ -140,7 +140,7 @@ Here, the data set is not tidy because
 * The `Sample` column contains two variables: the number of people in the sample and the population that was sampled (likely voters or registered voters). These should be stored in separate columns.
 * The last four column names are values of `candidate` and `party` variables, which should be stored in their own columns. 
 
-To break a single character column into multiple new columns we use the `separate` function in the `tidyr` package.
+To break a single character column into multiple new columns, we use the `separate` function in the `tidyr` package.
 
 To begin, let's break the `Date` column into `Begin` and `End` columns:
 
@@ -154,7 +154,7 @@ head(Polls2)
 * The second argument, `col`, specifies the name of the column to be split.
 * The third argument, `into`, specifies the names of the new columns. Note that  since these are specific column names we are creating, they should be given in quotes.
 * R will try to guess how the values should be separated by searching for non-alphanumeric values; however, if there are multiple non-alphanumeric values this may fail. In this example, if we did not specify that `sep = " - "`, then R would erroneously use `\` as the separator. To manually specify the separator between columns we can place the character(s) in quotes. 
-* In `sep = " - "`, the spaces around `-` avoid excess whitespace in the resulting cell values.
+* In `sep = " - "`, the spaces around `-` avoid excess white space in the resulting cell values.
 
 
 In the space below, separate the `Sample` column into `size` and `population` columns. Here we will use `sep = " "` to identify that a blank space is used as the separator. If you have difficulty, click the hint button.
@@ -195,7 +195,7 @@ head(Airlines)
 
 In this example, a case is best described as an airline in a specific time frame, so these data are not tidy because each case is not its own row. Additionally, the last six column names contain the time frame, which is a value. In order to tidy this data set we must
 
-* have each row respresent an airlines in a specific time frame,
+* have each row represent an airlines in a specific time frame,
 * create a `years` column to specify the time frame,
 * and create columns for each type of accident: `incidents`, `fatal_accidents`, and `fatalities`.
 

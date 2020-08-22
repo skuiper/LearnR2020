@@ -95,9 +95,9 @@ ggplot(data=AmesHousing, mapping= aes(x=GrLivArea, y=SalePrice)) + geom_point()
 * `ggplot(data, aes(x, y)) + geom_line()`
 * `ggplot(data) + geom_line(aes(x, y))`
 
-In the first case, the `aes` is set as the default for all `geoms`. In essense, the same `x` and `y` variables are used throughout the entire graphic. However, as graphics get more complex, it is often best to creating local `aes` mappings for each `geom` as shown in the second line of code.
+In the first case, the `aes` is set as the default for all `geoms`. In essence, the same `x` and `y` variables are used throughout the entire graphic. However, as graphics get more complex, it is often best to creating local `aes` mappings for each `geom` as shown in the second line of code.
 
-Modify the code for histogram above so that the `aes` is listed within the `geom`. However the resulting graph should look identical to the one above.
+Modify the code for histogram above so that the `aes` is listed within the `geom`. The resulting graph should look identical to the one above.
 ```{r 2-d,exercise=TRUE,exercise.lines=5,message=FALSE}
 
 ```
@@ -109,7 +109,7 @@ It is easy to make modifications to the color, shape and transparency of the poi
 
 ```{r 3-a,exercise=TRUE}
 ggplot(data=AmesHousing) +
-  geom_point(mapping = aes(x=log(GrLivArea), y=log(SalePrice), color=KitchenQuality), alpha = .5, shape = 1)
+  geom_point(mapping = aes(x=log(GrLivArea), y=log(SalePrice), color="violet"), alpha = .5, shape = 1)
 ```
 
 
@@ -117,11 +117,11 @@ ggplot(data=AmesHousing) +
 
 * In the code above, adjust `alpha` to any values between 0 and 1. How does changing `alpha` modify the points on a graph?
 * Adjust the shape values. For example, what symbol is used when `shape = 1`?
-* Run the above code using `geom_point(aes(x=log(GrLivArea), y=log(SalePrice)), color = "violet", alpha = .5,shape = 10)`. What color corresponds to Kitchen Quality = Good?
+* Run the above code using `geom_point(aes(x=log(GrLivArea), y=log(SalePrice)), color = KitchenQuality, alpha = .5,shape = 10)`. What color corresponds to Kitchen Quality = Good?
 
 Notice that fixed color names are given in quotes, `color = "navy"`. However, if we select colors based upon a variable from our data frame, we treat it as an explanatory variable, and place it within the `aes` part of our code.
 
-The scatterplot above suffers from overplotting, that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In **ggplot2**, this is easily done using the `facet_grid()` layer.
+The scatterplot above suffers from overplotting; that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In **ggplot2**, this is easily done using the `facet_grid()` layer.
 
 ```{r 3-b, exercise = TRUE}
 # Create distinct scatterplots for each type of kitchen quality
@@ -148,8 +148,8 @@ ggplot(data=AmesHousing) +
 
 * The histogram geom transforms the SalePrice, modifies the bin size and changes the color.
 * `geom_density` overlays a density curve on top of the histogram.
-* Typically density curves and histrograms have very different scales, here we use `y = (..count..)` to modify the density. Alternatively, we could specify `aes(x = SalePrice/100000, y = (..density..))` in the histogram geom.
-* The labs() command adds a title and an x-axis label. A y-axis label can also be added by using `y = " ".
+* Typically density curves and histograms have very different scales; here, we use `y = (..count..)` to modify the density. Alternatively, we could specify `aes(x = SalePrice/100000, y = (..density..))` in the histogram geom.
+* The labs() command adds a title and an x-axis label. A y-axis label can also be added by using `y = " "'.
 
 
 In the code below we create three scatterplots of the log of the above ground living area by the log of sales price
@@ -231,7 +231,7 @@ ggplot(data=AmesHousing) +
   geom_density(aes(SalePrice, color = Fireplaces,  fill = Fireplaces))
 ```
 
-In the following code, we use the `dplyr` package to modify the AmesHousing data; we first restrict the dataset to only houses with less than three fireplaces and then create a new variable, called **Fireplace2**. The `as.factor` command creates a **factor**, wich is a variable that contains a set of numeric codes with character-valued levels. Notice that the `color` and `fill` command now work properly. 
+In the following code, we use the `dplyr` package to modify the AmesHousing data; we first restrict the dataset to only houses with less than three fireplaces and then create a new variable, called **Fireplace2**. The `as.factor` command creates a **factor**, which is a variable that contains a set of numeric codes with character-valued levels. Notice that the `color` and `fill` command now work properly. 
 
 ```{r 5b,exercise=TRUE}
 # Create a new data frame with only houses with less than 3 fireplaces

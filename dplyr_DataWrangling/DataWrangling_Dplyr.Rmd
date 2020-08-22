@@ -64,7 +64,7 @@ head(Colleges)
 
 ```
 
-1) How would you use the 'tail' function to view the last 10 rows of the Colleges data? If you are not sure, try modifying the code chunk above.",
+1) How would you use the 'tail' function to view the last 10 rows of the Colleges data? If you are not sure, try modifying the code chunk above.
       * tail(Colleges, '10')
       * head(Colleges, tail = '10')
       * tail(Colleges, 10)
@@ -96,7 +96,7 @@ head(Wi)
 
 * To specify that **at least one** test must be passed, use the `|` character instead of the comma. For example, the below test checks whether a college is in Wisconsin or Minnesota or Iowa, so it returns all of the colleges in Wisconsin, Minnesota, and Iowa.
 
-<h5 style="text-align: center;" markdown="1">smallWI <- filter(colleges, state == "WI", undergrads < 2000)</h5>>
+<h5 style="text-align: center;" markdown="1">WIM <- filter(Colleges, state == "WI" | state == "MN" | state == "IA")</h5>>
 
 * You can use both `|` and `,` to specify multiple tests. For example, we can return all colleges with fewer than 2,000 undergraduate students in Wisconsin, Minnesota, and Iowa.
 
@@ -126,7 +126,7 @@ Modify the code below to answer the following questions
 
 ```{r 2c, exercise = TRUE}
 smallWIM <- filter(Colleges, state == "WI" | state == "MN" | state == "IA", undergrads < 2000)
-head(smallWIM)
+count(smallWIM)
 ```
 
 
@@ -175,7 +175,7 @@ For example, running the code below reorders **Colleges** first by the median AC
 
 **On Your Own**
 
-Modify the code below to answer the following quesitons:
+Modify the code below to answer the following questions:
 
 ```{r 4b, exercise = TRUE}
 Cost1 <- filter(Colleges, !is.na(cost))
@@ -232,7 +232,7 @@ Col1 <- arrange(Col1, -ACTmath, -ACTenglish)
 dim(Col1)
 ```
 
-9) What college has the hightest **ACTmath** score? 
+9) What college has the highest **ACTmath** score? 
 10) How many rows are in this new data frame?
 11) How many colleges and an average **ACTmath** score of 34?
 
@@ -270,7 +270,7 @@ To create summary statistics for columns within the data frame we must aggregate
 For example, to calculate the average cost of all `r nrow(Colleges)` colleges in our data frame we run the following command:
 
 ```{r summarize, exercise = TRUE}
-summarize(Colleges, medianCost = mean(cost, na.rm = TRUE))
+summarize(Colleges, meanCost = mean(cost, na.rm = TRUE))
 ```
 
 **Remarks**
@@ -364,7 +364,7 @@ Colleges_by_state
 
 **On Your Own**
 
-Modify the code below to answer the following quesitons:
+Modify the code below to answer the following questions:
 
 ```{r 9a, exercise = TRUE}
 Colleges_by_type <- group_by(Colleges, type)

@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = FALSE)
 * R file types
   * `.R` scripts vs. `.Rmd` files
   * Other file types
-* RActivities
+* R Activities
   * Expressions
     * Data types
   * Object assignment
