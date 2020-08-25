@@ -85,7 +85,7 @@ gf_point(log(SalePrice) ~ log(GrLivArea), data = AmesHousing, color = "navy", sh
 
 Notice that fixed color names are given in quotes, `color = "navy"`. However, if we select colors based upon a variable from our data frame, we treat it as an explanatory variable, `~ x`, in our model.
 
-The scatterplots above suffer from overplotting, that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In **ggformula**, this is easily done using the gf_facet_grid() layer.
+The scatterplots above suffer from overplotting; that is, many values are being plotted on top of each other many times. We can use the alpha argument to adjust the transparency of points so that higher density regions are darker. By default, this value is set to 1 (non-transparent), but it can be changed to any number between 0 and 1, where smaller values correspond to more transparency. Another useful technique is to use the facet option to render scatterplots for each level of an additional categorical variable, such as kitchen quality. In **ggformula**, this is easily done using the gf_facet_grid() layer.
 
 We can use the pipe operator `%>%` to add a new layer into a graph. This pipe operator is an easy way to create a chain of processing actions by allowing an intermediate result (left of the %>%) to become the first argument of the next function (right of the %>%). Below we start with a scatterplot and then assign that scatterplot to the `gf_facet_grid()` function to create distinct panels for each type of kitchen quality. Then the result is again passed to the `gf_labs()` function, which adds titles and labels to the graph. 
 
@@ -245,7 +245,7 @@ gf_density(~ SalePrice, data = AmesHousing2, color = ~ Fireplaces, fill = ~ Fire
 
 * Typing in a function will show you what attributes can be used. For example if you type `gf_histogram()` in one of the code chunks above a summarized output will be displayed showing that in addition to `alpha`, `color`, and `fill`, additional attributes such as `binwidth`, `linetype`, and `size` can be used.
 
-* Specific details can be found for any funciton in `ggformula`. For example, typing `?gf_histogram()` in one of the code chunks will bring you to a new website with examples and more details about this funciton.
+* Specific details can be found for any function in `ggformula`. For example, typing `?gf_histogram()` in one of the code chunks will bring you to a new website with examples and more details about this function.
 
 * In the above examples, only a few functions are listed. The [ggformula description](https://cran.r-project.org/web/packages/ggformula/ggformula.pdf) lists each function and gives detailed examples of how they are used. You can also use the tab completion feature in RStudio (type `gf_` and hit the Tab key on your console) to see options for most graphs.
 
